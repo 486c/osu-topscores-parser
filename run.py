@@ -9,10 +9,10 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 # Change to your own settings
-API_KEY = "aa195a21766ac632ec60b7f7953feb086f55fbde"
+API_KEY = ""
 TIME_START = datetime(2022, 8, 1, 0, 0, 0) # FROM
 TIME_END = datetime(2022, 8, 8, 0, 0, 0) # TO
-SHEET_NAME = "osu!Belarus weekly top scores [2022]"
+SHEET_NAME = ""
 COUNTRY_CODE = "BY"
 NUM_PAGES = 2 # number of ranking pages e.g. 2 is 100 users
 CREDS_FILE = "./creds.json"
