@@ -1,13 +1,20 @@
 from typing import List
-from aiohttp import ClientSession
-import asyncio
+from typing import Union
+
 from datetime import datetime
-import requests
-from bs4 import BeautifulSoup
 import time
+
+import asyncio
+from aiohttp import ClientSession
+
+import requests
+
+from bs4 import BeautifulSoup
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+import orjson
 # Change to your own settings
 API_KEY = ""
 TIME_START = datetime(2022, 8, 1, 0, 0, 0) # FROM
@@ -86,7 +93,7 @@ async def get_best_scores(session, username: str):
     async with session.get(link) as r:
         return await r.json()
 
-async def get_user(session, uid: int):
+async def get_user(session, uid: Union[int, str]):
     link = (
         "https://osu.ppy.sh/api/get_user"
          f"?k={API_KEY}"
@@ -107,7 +114,7 @@ async def get_beatmap(session, bid: int):
         return j[0]
 
 async def task(username: str):
-    session = ClientSession()
+    session = ClientSession(json_serialize=orjson.dumps)
     scores = await get_best_scores(session, username)
     user_data = await get_user(session, username)
 
