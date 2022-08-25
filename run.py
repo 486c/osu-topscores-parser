@@ -3,6 +3,7 @@ from typing import Union
 
 from datetime import datetime
 import time
+import pytz
 
 import asyncio
 from aiohttp import ClientSession
@@ -15,12 +16,24 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 import orjson
+
 # Change to your own settings
 API_KEY = ""
-TIME_START = datetime(2022, 8, 1, 0, 0, 0) # FROM
-TIME_END = datetime(2022, 8, 8, 0, 0, 0) # TO
+
+# Please set your own timezone!!!
+# It will be converted to UTC timezone
+# cuz osu!api return score time in UTC
+TIME_START = datetime( # FROM
+    2022, 8, 21, 0, 0, 0, 0,
+    pytz.timezone('Europe/Minsk') # !!!!
+) 
+TIME_END = datetime(
+    2022, 8, 28, 0, 0, 0, 0, # TO
+    pytz.timezone('Europe/Minsk') # !!!!
+) 
+
 SHEET_NAME = ""
-COUNTRY_CODE = "BY"
+COUNTRY_CODE = ""
 NUM_PAGES = 2 # number of ranking pages e.g. 2 is 100 users
 CREDS_FILE = "./creds.json"
 
@@ -117,10 +130,10 @@ async def task(username: str):
     session = ClientSession(json_serialize=orjson.dumps)
     scores = await get_best_scores(session, username)
     user_data = await get_user(session, username)
-
     for score in scores:
         dt = datetime.strptime(score['date'], DT_FORMAT)
-        if (dt > TIME_START) and (dt < TIME_END):
+        dt = pytz.UTC.localize(dt)
+        if (dt > TIME_START.astimezone()) and (dt < TIME_END.astimezone()):
             info = []
             b = await get_beatmap(session, score['beatmap_id'])
 
