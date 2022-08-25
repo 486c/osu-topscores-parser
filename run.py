@@ -4,6 +4,7 @@ from typing import Union
 from datetime import datetime
 import time
 import pytz
+from zoneinfo import ZoneInfo
 
 import asyncio
 from aiohttp import ClientSession
@@ -22,14 +23,14 @@ API_KEY = ""
 
 # Please set your own timezone!!!
 # It will be converted to UTC timezone
-# cuz osu!api return score time in UTC
+# cuz osu!api return scores time in UTC
 TIME_START = datetime( # FROM
-    2022, 8, 21, 0, 0, 0, 0,
-    pytz.timezone('Europe/Minsk') # !!!!
+    2022, 8, 22, 0, 0, 0, 0,
+    tzinfo=ZoneInfo("Europe/Minsk")
 ) 
 TIME_END = datetime(
     2022, 8, 28, 0, 0, 0, 0, # TO
-    pytz.timezone('Europe/Minsk') # !!!!
+    tzinfo=ZoneInfo("Europe/Minsk")
 ) 
 
 SHEET_NAME = ""
@@ -133,7 +134,7 @@ async def task(username: str):
     for score in scores:
         dt = datetime.strptime(score['date'], DT_FORMAT)
         dt = pytz.UTC.localize(dt)
-        if (dt > TIME_START.astimezone()) and (dt < TIME_END.astimezone()):
+        if (dt > TIME_START.astimezone(pytz.UTC)) and (dt < TIME_END.astimezone(pytz.UTC)):
             info = []
             b = await get_beatmap(session, score['beatmap_id'])
 
